@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Citas - Clínica Odontológica</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f6fb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 255, 0.1);
+      max-width: 400px;
+      width: 100%;
+      border: 2px solid #007BFF;
+    }
+
+    h2 {
+      text-align: center;
+      color: #007BFF;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #004080;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.7rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 0.8rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .mensaje {
+      margin-top: 1rem;
+      text-align: center;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Agendar Cita Odontológica</h2>
+    <form id="formularioCita">
+      <label for="nombre">Nombre completo</label>
+      <input type="text" id="nombre" required />
+
+      <label for="correo">Correo electrónico</label>
+      <input type="email" id="correo" required />
+
+      <label for="telefono">Teléfono</label>
+      <input type="tel" id="telefono" required />
+
+      <label for="fecha">Fecha de la cita</label>
+      <input type="date" id="fecha" required />
+
+      <label for="motivo">Motivo de la cita</label>
+      <textarea id="motivo" rows="3" required></textarea>
+
+      <button type="submit">Registrar Cita</button>
+      <div class="mensaje" id="mensajeExito"></div>
+    </form>
+  </div>
+
+  <!-- Firebase SDK y conexión -->
+  <script type="module">
+    // Importar SDK de Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFMPAqrh3AqyZmMYkSErjRfZpmy_0uIJw",
+      authDomain: "e1459-814f3.firebaseapp.com",
+      projectId: "e1459-814f3",
+      storageBucket: "e1459-814f3.appspot.com",
+      messagingSenderId: "112701695687",
+      appId: "1:112701695687:web:f255dce8950f66956700e2"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Manejar envío del formulario
+    const formulario = document.getElementById('formularioCita');
+    const mensajeExito = document.getElementById('mensajeExito');
+
+    formulario.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nombre = document.getElementById('nombre').value;
+      const correo = document.getElementById('correo').value;
+      const telefono = document.getElementById('telefono').value;
+      const fecha = document.getElementById('fecha').value;
+      const motivo = document.getElementById('motivo').value;
+
+      try {
+        await addDoc(collection(db, "citas"), {
+          nombre,
+          correo,
+          telefono,
+          fecha,
+          motivo
+        });
+
+        mensajeExito.textContent = "Cita registrada correctamente.";
+        formulario.reset();
+      } catch (error) {
+        console.error("Error al registrar cita:", error);
+        mensajeExito.textContent = "Error al registrar la cita. Intente de nuevo.";
+        mensajeExito.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>
